@@ -6,18 +6,6 @@
 #include "../../DataTable/BuildingData.h"
 #include "BuildingSubWidget.generated.h"
 
-UENUM(BlueprintType)
-enum class EBuildingType :uint8
-{
-	Miner,
-	Crafting,
-	Storage,
-	Power,
-	Structure,
-	Light,
-	ETC
-};
-
 struct FBuildingCategoryInfo
 {
 	UUserWidget* CategoryWidget;
@@ -68,6 +56,7 @@ protected:
 	void SetCategoryWidget(FString Text, int32 Order);
 	void SetSlotWidget(FGameplayTag Tag, int32 SecondOrder, int32 ThirdOrder);
 	void SortBuildingWidget();
-	void UpdateMinerWidget(FGameplayTag Tag);
+
+	void SetBuildingWidget(FGameplayTag Tag);
 
 };

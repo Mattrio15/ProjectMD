@@ -13,12 +13,21 @@ class PROJECTMD_API UBuildingSlotWidget : public UWidgetBase
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY(meta = (BindWidgetOptional))
+	TObjectPtr<UButton> BuildingSlotButton;
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UTextBlock> TestText;
 	UPROPERTY()
 	FGameplayTag mBuildingTag;
 
+protected:
+	virtual void NativeConstruct() override;
+
 public:
 	void SetBuildingSlotTag(FGameplayTag Tag);
+
+protected:
+	UFUNCTION()
+	void OnButtonClick();
 
 };

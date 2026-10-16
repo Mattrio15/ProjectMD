@@ -31,26 +31,7 @@ void UBuildingSubWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 
 void UBuildingSubWidget::UpdateBuildingWidget(FGameplayTag Tag)
 {
-	switch (mBuildingType)
-	{
-	case EBuildingType::Miner: UpdateMinerWidget(Tag); break;
-	case EBuildingType::Crafting:
-		break;
-	case EBuildingType::Storage:
-		break;
-	case EBuildingType::Power:
-		break;
-	case EBuildingType::Structure:
-		break;
-	case EBuildingType::Light:
-		break;
-	case EBuildingType::ETC:
-		break;
-	default:
-		break;
-	}
-
-
+	SetBuildingWidget(Tag);
 }
 
 void UBuildingSubWidget::SetCategoryWidget(FString Text, int32 Order)
@@ -119,15 +100,13 @@ void UBuildingSubWidget::SortBuildingWidget()
 	}
 }
 
-void UBuildingSubWidget::UpdateMinerWidget(FGameplayTag Tag)
+void UBuildingSubWidget::SetBuildingWidget(FGameplayTag Tag)
 {
-	if (mTA_BuildingTag.Contains(Tag))
-		return;
-
-	mTA_BuildingTag.Add(Tag);
-
 	FString TagString = Tag.ToString();
 
+	if (mTA_BuildingTag.Contains(Tag))
+		return;
+		
 	FBuildingData Data;
 	UGameInstanceBase* GI = GetGameInstance<UGameInstanceBase>();
 	if (!IsValid(GI) || !GI->GetBuildingData(Tag,Data))
@@ -135,6 +114,11 @@ void UBuildingSubWidget::UpdateMinerWidget(FGameplayTag Tag)
 		CHECK(" GI");
 		return;
 	}
+
+	if (Data.FirstOrder != mBuildingType)
+		return;
+
+	mTA_BuildingTag.Add(Tag);
 
 	FString Text = Data.Category.ToString();
 	SetCategoryWidget(Text, Data.SecondOrder);

@@ -5,6 +5,15 @@
 #include "../../DataTable/BuildingData.h"
 #include "../../GameInstanceBase.h"
 
+void UBuildingSlotWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (IsValid(BuildingSlotButton))
+		BuildingSlotButton->OnClicked.AddDynamic(this, &UBuildingSlotWidget::OnButtonClick);
+
+}
+
 void UBuildingSlotWidget::SetBuildingSlotTag(FGameplayTag Tag)
 {
 	FBuildingData Data;
@@ -16,5 +25,11 @@ void UBuildingSlotWidget::SetBuildingSlotTag(FGameplayTag Tag)
 	}
 
 	TestText->SetText(Data.Name);
+
+}
+
+void UBuildingSlotWidget::OnButtonClick()
+{
+
 
 }

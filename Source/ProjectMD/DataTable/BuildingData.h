@@ -17,6 +17,18 @@ public:
 
 };
 
+UENUM(BlueprintType)
+enum class EBuildingType:uint8
+{
+	Miner,
+	Crafting,
+	Storage,
+	Power,
+	Structure,
+	Light,
+	ETC
+};
+
 USTRUCT(BlueprintType)
 struct FBuildingData:public FTableRowBase
 {
@@ -51,7 +63,7 @@ public:
 	FText Category;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 FirstOrder = 0;
+	EBuildingType FirstOrder;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 SecondOrder = 0;
