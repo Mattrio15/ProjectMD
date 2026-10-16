@@ -1,0 +1,31 @@
+# Visual Studio / C++ 임시 및 빌드 파일 제외
+.vs/
+.idea/
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Build/
+Script/
+
+# Xcode / Mac 관련 (선택)
+*.xcodeproj
+*.xcworkspace
+
+# 언리얼 엔진 에셋 / 바이너리 및 생성 파일 제외
+Content/
+Plugins/*/Intermediate/
+Plugins/*/Binaries/
+
+# 솔루션 파일 (Local 구성 파일)
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.cache
+*.VC.db
+*.VC.opendb
+
+# 시스템 파일
+.DS_Store
+Thumbs.db

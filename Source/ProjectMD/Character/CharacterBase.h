@@ -1,0 +1,45 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "../Game_Info.h"
+#include "GameFramework/Character.h"
+#include "CharacterBase.generated.h"
+
+class UDefaultInputComponent;
+class UWidgetInputComponent;
+
+UCLASS()
+class PROJECTMD_API ACharacterBase : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	ACharacterBase();
+
+protected:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USpringArmComponent> mArm;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UCameraComponent> mCamera;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDefaultInputComponent> mDefaultInputComponent;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UWidgetInputComponent> mWidgetInputComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UAnimInstance> mAnim;
+
+protected:
+	virtual void BeginPlay() override;
+
+public:	
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+public:
+	void ConnectMapping(bool A);
+
+};
