@@ -4,6 +4,8 @@
 #include "CharacterBase.h"
 #include "Component/DefaultInputComponent.h"
 #include "Component/WidgetInputComponent.h"
+#include "Component/BuildingInputComponent.h"
+#include "Component/BuildingComponent.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -14,9 +16,15 @@ ACharacterBase::ACharacterBase()
 
 	mArm->SetupAttachment(RootComponent);
 	mCamera->SetupAttachment(mArm);
+	mArm->TargetArmLength = 200;
+	mArm->SetRelativeLocation(FVector(0, 0, 75));
+	mCamera->SetRelativeLocation(FVector(0, 75, 0));
 
 	mDefaultInputComponent = MyObject(UDefaultInputComponent, "DefaultInputComponent");
 	mWidgetInputComponent = MyObject(UWidgetInputComponent, "WidgetInputComponent");
+	mBuildingInputComponent = MyObject(UBuildingInputComponent, "BuildingInputComponent");
+
+	mBuildingComponent = MyObject(UBuildingComponent, "BuildingComponent");
 
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -45,25 +53,32 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (!IsValid(mDefaultInputComponent))
-	{
-		CHECK(" DefaultInput");
+	if (!CHECK(mDefaultInputComponent) || !CHECK(mWidgetInputComponent) || !CHECK(mBuildingInputComponent))
 		return;
-	}
-	if (!IsValid(mWidgetInputComponent))
-	{
-		CHECK(" WidgetInput");
-		return;
-	}
 
-	mDefaultInputComponent->InitComponent(this, PlayerInputComponent);
-	mWidgetInputComponent->InitComponent(this, PlayerInputComponent);
+	mDefaultInputComponent->BindAction(PlayerInputComponent);
+	mWidgetInputComponent->BindAction(PlayerInputComponent);
+	mBuildingInputComponent->BindAction(PlayerInputComponent);
+
+	ConnectMapping(true, false, false);
 
 }
 
-void ACharacterBase::ConnectMapping(bool A)
+void ACharacterBase::ConnectMapping(bool Default, bool Widget, bool Building)
 {
-	if (IsValid(mDefaultInputComponent))
-		mDefaultInputComponent->ConnectMapping(A);
+	if (!CHECK(mDefaultInputComponent) || !CHECK(mWidgetInputComponent) || !CHECK(mBuildingInputComponent))
+		return;
+
+	mDefaultInputComponent->ConnectMapping(Default);
+	mWidgetInputComponent->ConnectMapping(Widget);
+	mBuildingInputComponent->ConnectMapping(Building);
+
 }
 
+void ACharacterBase::SetBuildingTag(FGameplayTag Tag)
+{
+	if (!CHECK(mBuildingComponent))
+		return;
+
+	mBuildingComponent->SetBuildingTag(Tag);
+}

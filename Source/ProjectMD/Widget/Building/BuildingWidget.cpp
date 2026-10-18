@@ -39,11 +39,8 @@ void UBuildingWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UBuildingWidget::SetSwitcherIndex(int32 Index)
 {
-	if (!IsValid(BuildingSwitcher))
-	{
-		CHECK(" BuildingSwitcher");
+	if (!CHECK(BuildingSwitcher))
 		return;
-	}
 
 	int32 Num = BuildingSwitcher->GetNumWidgets();
 

@@ -8,6 +8,9 @@
 
 class UDefaultInputComponent;
 class UWidgetInputComponent;
+class UBuildingInputComponent;
+
+class UBuildingComponent;
 
 UCLASS()
 class PROJECTMD_API ACharacterBase : public ACharacter
@@ -27,6 +30,11 @@ protected:
 	TObjectPtr<UDefaultInputComponent> mDefaultInputComponent;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UWidgetInputComponent> mWidgetInputComponent;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UBuildingInputComponent> mBuildingInputComponent;
+
+	UPROPERTY()
+	TObjectPtr<UBuildingComponent> mBuildingComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UAnimInstance> mAnim;
@@ -40,6 +48,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	void ConnectMapping(bool A);
+	void ConnectMapping(bool Default, bool Widget, bool Building);
+	void SetBuildingTag(FGameplayTag Tag);
+
+public:
+	UCameraComponent* GetCamera() { return mCamera; }
 
 };

@@ -13,9 +13,9 @@ UWidgetInputComponent::UWidgetInputComponent()
 	if (IMC_Widget.Succeeded())
 		mIMC_Widget = IMC_Widget.Object;
 
-	ObjectFinder(UInputAction, IA_Building, "/Script/EnhancedInput.InputAction'/Game/Input/Widget/IA_Building.IA_Building'");
-	if (IA_Building.Succeeded())
-		mIA_Building = IA_Building.Object;
+	ObjectFinder(UInputAction, IA_BuildingClose, "/Script/EnhancedInput.InputAction'/Game/Input/Widget/IA_BuildingClose.IA_BuildingClose'");
+	if (IA_BuildingClose.Succeeded())
+		mIA_BuildingClose = IA_BuildingClose.Object;
 
 	ObjectFinder(UInputAction, IA_NextPage, "/Script/EnhancedInput.InputAction'/Game/Input/Widget/IA_NextPage.IA_NextPage'");
 	if (IA_NextPage.Succeeded())
@@ -26,7 +26,7 @@ UWidgetInputComponent::UWidgetInputComponent()
 void UWidgetInputComponent::BeginPlay()
 {
 	Super::BeginPlay();
-		
+	
 }
 
 void UWidgetInputComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -35,40 +35,22 @@ void UWidgetInputComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 }
 
-void UWidgetInputComponent::InitComponent(ACharacterBase* Character, UInputComponent* InputComponent)
-{
-	mCharacter = Character;
-	if (!IsValid(mCharacter))
-	{
-		CHECK(" mCharacter");
-		return;
-	}
-
-	mController = mCharacter->GetController<APlayerController>();
-	if (!IsValid(mController))
-	{
-		CHECK(" mController");
-		return;
-	}
-
-
-	BindAction(InputComponent);
-
-	ConnectMapping(true);
-}
-
 void UWidgetInputComponent::BindAction(UInputComponent* InputComponent)
 {
-	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(InputComponent);
-
-	if (!IsValid(Input))
-	{
-		CHECK("Input");
+	mCharacter = GetOwner<ACharacterBase>();
+	if (!CHECK(mCharacter))
 		return;
-	}
 
-	if (IsValid(mIA_Building))
-		Input->BindAction(mIA_Building, ETriggerEvent::Started, this, &UWidgetInputComponent::Building);
+	mController = mCharacter->GetController<APlayerController>();
+	if (!CHECK(mController))
+		return;
+
+	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(InputComponent);
+	if (!CHECK(Input))
+		return;
+
+	if (IsValid(mIA_BuildingClose))
+		Input->BindAction(mIA_BuildingClose, ETriggerEvent::Started, this, &UWidgetInputComponent::BuildingClose);
 
 	if (IsValid(mIA_NextPage))
 		Input->BindAction(mIA_NextPage, ETriggerEvent::Started, this, &UWidgetInputComponent::NextPage);
@@ -89,17 +71,16 @@ void UWidgetInputComponent::ConnectMapping(bool A)
 	}
 }
 
-void UWidgetInputComponent::Building(const FInputActionInstance& Instance)
+void UWidgetInputComponent::BuildingClose(const FInputActionInstance& Instance)
 {
-	AMainHUD* HUD = mController->GetHUD<AMainHUD>();
-
-	if (!IsValid(HUD))
-	{
-		CHECK(" HUD");
+	if (!CHECK(mController) || !CHECK(mCharacter))
 		return;
-	}
 
-	HUD->ToggleWidget(EWidgetType::Building);
+	AMainHUD* HUD = mController->GetHUD<AMainHUD>();
+	if (!CHECK(HUD))
+		return;
+	
+	HUD->SetPlayerMode(EPlayerMode::Default);
 
 }
 
@@ -109,12 +90,12 @@ void UWidgetInputComponent::NextPage(const FInputActionInstance& Instance)
 
 	bool Next = Value > 0 ? true : false;
 
-	AMainHUD* HUD = mController->GetHUD<AMainHUD>();
-	if (!IsValid(HUD))
-	{
-		CHECK(" HUD");
+	if (!CHECK(mController))
 		return;
-	}
+
+	AMainHUD* HUD = mController->GetHUD<AMainHUD>();
+	if (!CHECK(HUD))
+		return;
 	
 	HUD->NextPageWidget(Next);
 

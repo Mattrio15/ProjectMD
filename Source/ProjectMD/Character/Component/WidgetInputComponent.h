@@ -26,7 +26,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UInputMappingContext> mIMC_Widget;
 	UPROPERTY()
-	TObjectPtr<UInputAction> mIA_Building;
+	TObjectPtr<UInputAction> mIA_BuildingClose;
 	UPROPERTY()
 	TObjectPtr<UInputAction> mIA_NextPage;
 
@@ -37,12 +37,11 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	void InitComponent(ACharacterBase* Character, UInputComponent* InputComponent);
 	void BindAction(UInputComponent* InputComponent);
 	void ConnectMapping(bool A);
 
 protected:
-	void Building(const FInputActionInstance& Instance);
+	void BuildingClose(const FInputActionInstance& Instance);
 	void NextPage(const FInputActionInstance& Instance);
 		
 };

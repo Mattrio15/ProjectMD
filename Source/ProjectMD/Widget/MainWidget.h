@@ -16,6 +16,8 @@ class PROJECTMD_API UMainWidget : public UWidgetBase
 protected:
 	UPROPERTY(meta = (BindWidgetOptional))
 	TObjectPtr<UWidgetBase> WBP_Building;
+	UPROPERTY(meta = (BindWidgetOptional))
+	TObjectPtr<UWidgetBase> WBP_BuildingMode;
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -28,7 +30,7 @@ protected:
 	UWidgetBase* GetWidget(EWidgetType Type);
 
 public:
-	ESlateVisibility ToggleWidget(EWidgetType Type);
+	void ShowWidget(EWidgetType Type, bool A);
 	void NextPageWidget(bool A);
 
 };

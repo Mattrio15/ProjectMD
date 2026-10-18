@@ -40,11 +40,8 @@ void UBuildingSubWidget::SetCategoryWidget(FString Text, int32 Order)
 		return;
 	mTA_BuildingCategory.Add(Text);
 	UBuildingCategoryWidget* CategoryWidget = CreateWidget<UBuildingCategoryWidget>(this, BuildingCategoryWidgetClass);
-	if (!IsValid(CategoryWidget))
-	{
-		CHECK(" CategoryWidget");
+	if (!CHECK(CategoryWidget))
 		return;
-	}
 
 	CategoryWidget->SetCategoryText(FText::FromString(Text));
 
@@ -59,11 +56,8 @@ void UBuildingSubWidget::SetCategoryWidget(FString Text, int32 Order)
 void UBuildingSubWidget::SetSlotWidget(FGameplayTag Tag, int32 SecondOrder, int32 ThirdOrder)
 {
 	UBuildingSlotWidget* SlotWidget = CreateWidget<UBuildingSlotWidget>(this, BuildingSlotWidgetClass);
-	if (!IsValid(SlotWidget))
-	{
-		CHECK(" SlotWidget");
+	if (!CHECK(SlotWidget))
 		return;
-	}
 
 	SlotWidget->SetBuildingSlotTag(Tag);
 
@@ -109,11 +103,8 @@ void UBuildingSubWidget::SetBuildingWidget(FGameplayTag Tag)
 		
 	FBuildingData Data;
 	UGameInstanceBase* GI = GetGameInstance<UGameInstanceBase>();
-	if (!IsValid(GI) || !GI->GetBuildingData(Tag,Data))
-	{
-		CHECK(" GI");
+	if (!CHECK(GI) || !GI->GetBuildingData(Tag,Data))
 		return;
-	}
 
 	if (Data.FirstOrder != mBuildingType)
 		return;

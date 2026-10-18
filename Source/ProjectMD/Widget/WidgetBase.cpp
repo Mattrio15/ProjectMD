@@ -22,10 +22,10 @@ void UWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 }
 
-void UWidgetBase::ToggleWidget()
+void UWidgetBase::ShowWidget(bool A)
 {
-	if (GetVisibility() == ESlateVisibility::Visible)
-		SetVisibility(ESlateVisibility::Hidden);
-	else
+	if (A)
 		SetVisibility(ESlateVisibility::Visible);
+	else
+		SetVisibility(ESlateVisibility::Hidden);
 }

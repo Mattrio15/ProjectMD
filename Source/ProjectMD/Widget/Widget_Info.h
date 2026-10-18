@@ -16,5 +16,6 @@ UENUM(BlueprintType)
 enum class EWidgetType : uint8
 {
 	None,
-	Building
+	Building,
+	BuildingMode
 };

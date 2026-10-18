@@ -28,6 +28,7 @@ UWidgetBase* UMainWidget::GetWidget(EWidgetType Type)
 	{
 	case EWidgetType::None: return nullptr;
 	case EWidgetType::Building: return WBP_Building;
+	case EWidgetType::BuildingMode: return WBP_BuildingMode;
 
 	default:
 		break;
@@ -36,16 +37,13 @@ UWidgetBase* UMainWidget::GetWidget(EWidgetType Type)
 	return nullptr;
 }
 
-ESlateVisibility UMainWidget::ToggleWidget(EWidgetType Type)
+void UMainWidget::ShowWidget(EWidgetType Type, bool A)
 {
 	UWidgetBase* Widget = GetWidget(Type);
-	if (IsValid(Widget))
-	{
-		Widget->ToggleWidget();
-		return Widget->GetVisibility();
-	}
+	if (!CHECK(Widget))
+		return;
 
-	return ESlateVisibility::Hidden;
+	Widget->ShowWidget(A);
 }
 
 void UMainWidget::NextPageWidget(bool A)

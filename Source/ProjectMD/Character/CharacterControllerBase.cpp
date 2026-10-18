@@ -23,6 +23,13 @@ void ACharacterControllerBase::CheatUnlockBuilding(const TArray<FString>& Args)
 		return;
 	}
 	FString TagStr = Args[0];
+	if (TagStr == TEXT("Test"))
+	{
+		FGameplayTag Tag1 = FGameplayTag::RequestGameplayTag(TEXT("Building.Miner.Stone.Normal"), false);
+		AddUnlockTag(Tag1);
+		return;
+	}
+
 	FGameplayTag TargetTag = FGameplayTag::RequestGameplayTag(FName(*TagStr), false);
 
 	if (!TargetTag.IsValid())

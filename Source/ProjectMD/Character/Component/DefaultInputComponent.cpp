@@ -3,6 +3,7 @@
 
 #include "DefaultInputComponent.h"
 #include "../CharacterBase.h"
+#include "../MainHUD.h"
 
 UDefaultInputComponent::UDefaultInputComponent()
 {
@@ -24,6 +25,10 @@ UDefaultInputComponent::UDefaultInputComponent()
 	if (IA_Jump.Succeeded())
 		mIA_Jump = IA_Jump.Object;
 
+	ObjectFinder(UInputAction, IA_Building, "/Script/EnhancedInput.InputAction'/Game/Input/Default/IA_Building.IA_Building'");
+	if (IA_Building.Succeeded())
+		mIA_Building = IA_Building.Object;
+
 }
 
 void UDefaultInputComponent::BeginPlay()
@@ -38,37 +43,19 @@ void UDefaultInputComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 }
 
-void UDefaultInputComponent::InitComponent(ACharacterBase* Character, UInputComponent* InputComponent)
-{
-	mCharacter = Character;
-	if (!IsValid(mCharacter))
-	{
-		CHECK(" mCharacter");
-		return;
-	}
-
-	mController = mCharacter->GetController<APlayerController>();
-	if (!IsValid(mController))
-	{
-		CHECK(" mController");
-		return;
-	}
-
-	BindAction(InputComponent);
-
-	ConnectMapping(true);
-
-}
-
 void UDefaultInputComponent::BindAction(UInputComponent* InputComponent)
 {
-	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(InputComponent);
-
-	if (!IsValid(Input))
-	{
-		CHECK("Input");
+	mCharacter = GetOwner<ACharacterBase>();
+	if (!CHECK(mCharacter))
 		return;
-	}
+
+	mController = mCharacter->GetController<APlayerController>();
+	if (!CHECK(mController))
+		return;
+
+	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(InputComponent);	
+	if (!CHECK(Input))
+		return;
 
 	if(IsValid(mIA_Move))
 		Input->BindAction(mIA_Move, ETriggerEvent::Triggered, this, &UDefaultInputComponent::Move);
@@ -78,6 +65,9 @@ void UDefaultInputComponent::BindAction(UInputComponent* InputComponent)
 
 	if (IsValid(mIA_Jump))
 		Input->BindAction(mIA_Jump, ETriggerEvent::Started, this, &UDefaultInputComponent::Jump);
+
+	if (IsValid(mIA_Building))
+		Input->BindAction(mIA_Building, ETriggerEvent::Started, this, &UDefaultInputComponent::Building);
 
 }
 
@@ -98,12 +88,9 @@ void UDefaultInputComponent::ConnectMapping(bool A)
 void UDefaultInputComponent::Move(const FInputActionInstance& Instance)
 {
 	FVector2D Value = Instance.GetValue().Get<FVector2D>();
-
-	if (!IsValid(mCharacter))
-	{
-		CHECK(" mCharacter");
+	
+	if (!CHECK(mCharacter))
 		return;
-	}
 
 	float Yaw = mCharacter->GetControlRotation().Yaw;
 	FRotator Rot = FRotator(0, Yaw, 0);
@@ -120,11 +107,8 @@ void UDefaultInputComponent::CameraRotation(const FInputActionInstance& Instance
 {
 	FVector2D Value = Instance.GetValue().Get<FVector2D>();
 
-	if (!IsValid(mCharacter))
-	{
-		CHECK(" mCharacter");
+	if (!CHECK(mCharacter))
 		return;
-	}
 
 	mCharacter->AddControllerPitchInput(-Value.Y);
 	mCharacter->AddControllerYawInput(Value.X);
@@ -133,12 +117,22 @@ void UDefaultInputComponent::CameraRotation(const FInputActionInstance& Instance
 
 void UDefaultInputComponent::Jump(const FInputActionInstance& Instance)
 {
-	if (!IsValid(mCharacter))
-	{
-		CHECK(" mCharacter");
+	if (!CHECK(mCharacter))
 		return;
-	}
 
 	mCharacter->Jump();
+
+}
+
+void UDefaultInputComponent::Building(const FInputActionInstance& Instance)
+{
+	if (!CHECK(mController) || !CHECK(mCharacter))
+		return;
+
+	AMainHUD* HUD = mController->GetHUD<AMainHUD>();
+	if (!CHECK(HUD))
+		return;
+	
+	HUD->SetPlayerMode(EPlayerMode::BuildingWidget);
 
 }
