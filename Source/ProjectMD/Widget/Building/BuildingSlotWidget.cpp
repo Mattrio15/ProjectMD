@@ -3,9 +3,8 @@
 
 #include "BuildingSlotWidget.h"
 #include "../../DataTable/BuildingData.h"
-#include "../../GameInstanceBase.h"
+#include "../../Subsystem/BuildingSubsystem.h"
 #include "../../Character/MainHUD.h"
-#include "../../Character/CharacterBase.h"
 
 void UBuildingSlotWidget::NativeConstruct()
 {
@@ -19,8 +18,9 @@ void UBuildingSlotWidget::NativeConstruct()
 void UBuildingSlotWidget::SetBuildingSlotTag(FGameplayTag Tag)
 {
 	FBuildingData Data;
-	UGameInstanceBase* GI = GetGameInstance<UGameInstanceBase>();
-	if (!CHECK(GI) || !GI->GetBuildingData(Tag, Data))
+
+	UBuildingSubsystem* BS = GetGameInstance()->GetSubsystem<UBuildingSubsystem>();
+	if (!CHECK(BS) || !BS->GetBuildingData(Tag, Data))
 		return;
 
 	TestText->SetText(Data.Name);
@@ -33,7 +33,9 @@ void UBuildingSlotWidget::OnButtonClick()
 	AMainHUD* HUD = PC->GetHUD<AMainHUD>();
 	HUD->SetPlayerMode(EPlayerMode::BuildingMode);
 
-	ACharacterBase* CB = Cast<ACharacterBase>(PC->GetCharacter());
-	CB->SetBuildingTag(mBuildingTag);
+	UBuildingSubsystem* BS = GetGameInstance()->GetSubsystem<UBuildingSubsystem>();
+	if (!CHECK(BS))
+		return;
+	BS->OnGetBuildingTag.Broadcast(mBuildingTag);
 
 }

@@ -31,8 +31,21 @@ void UBuildingInputComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	if (!mOnBuildingInputComponent)
 		return;
 	
-	if(CHECK(mCamera))
-		Test("Camera : %s", * mCamera->GetName());
+	FHitResult Result;
+	FVector Start = mCamera->GetComponentLocation();
+	FVector End = Start + mCamera->GetForwardVector() * 750;
+	bool Collision = GetWorld()->LineTraceSingleByProfile(Result, Start, End, TEXT("GhostBuilding"));
+	FColor Color = Collision ? FColor::Red : FColor::Green;
+	if(Collision)
+		End = Result.ImpactPoint;
+	else
+	{
+		DrawDebugSphere(GetWorld(), End, 10, 10, Color, false, 1);
+		GetWorld()->LineTraceSingleByProfile(Result, End, End + FVector(0, 0, -10000), TEXT("GhostBuilding"));
+		End = Result.ImpactPoint;
+	}
+	DrawDebugSphere(GetWorld(), End, 10, 10, Color, false, 1);
+
 }
 
 void UBuildingInputComponent::BindAction(UInputComponent* InputComponent)

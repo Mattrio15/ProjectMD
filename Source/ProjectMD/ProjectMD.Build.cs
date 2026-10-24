@@ -9,7 +9,7 @@ public class ProjectMD : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput",
-		"GameplayTags" });
+        "Slate", "SlateCore", "GameplayTags" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

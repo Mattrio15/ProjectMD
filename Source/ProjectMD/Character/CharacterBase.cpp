@@ -33,6 +33,9 @@ ACharacterBase::ACharacterBase()
 
 	mArm->bUsePawnControlRotation = true;
 
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Character"));
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 
 void ACharacterBase::BeginPlay()
@@ -73,12 +76,4 @@ void ACharacterBase::ConnectMapping(bool Default, bool Widget, bool Building)
 	mWidgetInputComponent->ConnectMapping(Widget);
 	mBuildingInputComponent->ConnectMapping(Building);
 
-}
-
-void ACharacterBase::SetBuildingTag(FGameplayTag Tag)
-{
-	if (!CHECK(mBuildingComponent))
-		return;
-
-	mBuildingComponent->SetBuildingTag(Tag);
 }

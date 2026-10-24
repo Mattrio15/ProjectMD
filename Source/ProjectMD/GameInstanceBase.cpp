@@ -8,12 +8,24 @@ bool UGameInstanceBase::GetBuildingData(FGameplayTag Tag, FBuildingData& Buildin
 	if (!Tag.IsValid() || !IsValid(mBuildingTable))
 		return false;
 
-	FName TagName = Tag.GetTagName();
-	FBuildingData* BD = mBuildingTable->FindRow<FBuildingData>(TagName, __FUNCTION__);
+	if (mTM_BuildingData.Num() < 1)
+	{
+		TArray<FBuildingData*> BuildingDataArray;
+		mBuildingTable->GetAllRows<FBuildingData>(TEXT(__FUNCTION__), BuildingDataArray);
 
-	if (!BD)
+		int32 Max = BuildingDataArray.Num();
+		for (int32 i = 0; i < Max; ++i)
+		{
+			FBuildingData* Data = BuildingDataArray[i];
+			FGameplayTag Tag = Data->Tag;
+			mTM_BuildingData.Add(Tag, *Data);
+		}
+	}
+
+	if (!mTM_BuildingData.Contains(Tag))
 		return false;
 
-	BuildingData = *BD;
+	BuildingData = mTM_BuildingData[Tag];
+	
 	return true;
 }

@@ -25,8 +25,11 @@ protected:
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-public:
-	void SetBuildingTag(FGameplayTag Tag) { mBuildingTag = Tag; }
+protected:
+	UFUNCTION()
+	void SetBuildingTag(FGameplayTag Tag);
+
+	
 
 		
 };

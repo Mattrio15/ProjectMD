@@ -18,12 +18,20 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USceneComponent> mRoot;
 	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UBoxComponent> mBox;
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USkeletalMeshComponent> mMesh;
+
+	FGameplayTag mBuildingTag;
 
 protected:
 	virtual void BeginPlay() override;
 
 public:
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	UFUNCTION()
+	void SetBuildingTag(FGameplayTag Tag);
 
 };

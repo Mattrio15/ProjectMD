@@ -31,7 +31,11 @@ protected:
 	UPROPERTY(meta = (BindWidgetOptional))
 	TObjectPtr<UWidgetSwitcher> BuildingSwitcher;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int32 mSwitcherIndex = 0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<UButton*> mTA_Button;
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -61,5 +65,6 @@ protected:
 	void ClickBuildingButton_5() { SetSwitcherIndex(5); }
 	UFUNCTION()
 	void ClickBuildingButton_6() { SetSwitcherIndex(6); }
+
 	
 };

@@ -5,7 +5,7 @@
 #include "BuildingSlotWidget.h"
 #include "BuildingCategoryWidget.h"
 #include "../../Character/CharacterControllerBase.h"
-#include "../../GameInstanceBase.h"
+#include "../../Subsystem/BuildingSubsystem.h"
 
 void UBuildingSubWidget::NativeOnInitialized()
 {
@@ -102,8 +102,8 @@ void UBuildingSubWidget::SetBuildingWidget(FGameplayTag Tag)
 		return;
 		
 	FBuildingData Data;
-	UGameInstanceBase* GI = GetGameInstance<UGameInstanceBase>();
-	if (!CHECK(GI) || !GI->GetBuildingData(Tag,Data))
+	UBuildingSubsystem* BS = GetGameInstance()->GetSubsystem<UBuildingSubsystem>();
+	if (!CHECK(BS) || !BS->GetBuildingData(Tag, Data))
 		return;
 
 	if (Data.FirstOrder != mBuildingType)

@@ -19,6 +19,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UDataTable> mBuildingTable;
 
+	UPROPERTY()
+	TMap<FGameplayTag, FBuildingData> mTM_BuildingData;
+
 public:
 	bool GetBuildingData(FGameplayTag Tag, FBuildingData& BuildingData);
 

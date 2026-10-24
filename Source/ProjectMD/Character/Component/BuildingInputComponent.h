@@ -30,8 +30,6 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UCameraComponent> mCamera;
 
-
-
 	bool mOnBuildingInputComponent = false;
 
 protected:

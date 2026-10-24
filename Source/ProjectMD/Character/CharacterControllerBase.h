@@ -28,6 +28,7 @@ protected:
 	void CheatUnlockBuilding(const TArray<FString>& Args);
 	
 public:
+	UFUNCTION(BlueprintCallable)
 	void AddUnlockTag(FGameplayTag Tag);
 
 };

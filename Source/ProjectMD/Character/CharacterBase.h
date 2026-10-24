@@ -33,7 +33,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UBuildingInputComponent> mBuildingInputComponent;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UBuildingComponent> mBuildingComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -49,7 +49,6 @@ public:
 
 public:
 	void ConnectMapping(bool Default, bool Widget, bool Building);
-	void SetBuildingTag(FGameplayTag Tag);
 
 public:
 	UCameraComponent* GetCamera() { return mCamera; }
