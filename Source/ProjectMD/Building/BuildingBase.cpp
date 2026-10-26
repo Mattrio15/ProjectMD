@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BuildingMinerBase.h"
+#include "BuildingBase.h"
 
-ABuildingMinerBase::ABuildingMinerBase()
+ABuildingBase::ABuildingBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -15,18 +15,18 @@ ABuildingMinerBase::ABuildingMinerBase()
 	mBox->SetupAttachment(mRoot);
 	mMesh->SetupAttachment(mRoot);
 
-	mBox->SetCollisionProfileName(TEXT("BuildingMiner"));
+	mBox->SetCollisionProfileName(TEXT("RealBuilding"));
 	mMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
 
-void ABuildingMinerBase::BeginPlay()
+void ABuildingBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-void ABuildingMinerBase::Tick(float DeltaTime)
+void ABuildingBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 

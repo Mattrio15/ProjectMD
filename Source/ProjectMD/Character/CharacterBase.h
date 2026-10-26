@@ -49,8 +49,11 @@ public:
 
 public:
 	void ConnectMapping(bool Default, bool Widget, bool Building);
+	void SetGhostBuildingLocation(const FVector& Location);
+	void SetGhostBuildingRotation(const FRotator& Rotation);
+	void SetRealBuilding();
 
 public:
-	UCameraComponent* GetCamera() { return mCamera; }
+	FRotator GetGhostBuildingRotation();
 
 };

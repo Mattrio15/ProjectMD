@@ -17,10 +17,12 @@ void UBuildingSlotWidget::NativeConstruct()
 
 void UBuildingSlotWidget::SetBuildingSlotTag(FGameplayTag Tag)
 {
+	mBuildingTag = Tag;
+
 	FBuildingData Data;
 
 	UBuildingSubsystem* BS = GetGameInstance()->GetSubsystem<UBuildingSubsystem>();
-	if (!CHECK(BS) || !BS->GetBuildingData(Tag, Data))
+	if (!CHECK(BS) || !BS->GetBuildingData(mBuildingTag, Data))
 		return;
 
 	TestText->SetText(Data.Name);

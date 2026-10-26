@@ -28,6 +28,7 @@ ACharacterBase::ACharacterBase()
 
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0, 0, 720);
 
 	bUseControllerRotationYaw = false;
 
@@ -76,4 +77,31 @@ void ACharacterBase::ConnectMapping(bool Default, bool Widget, bool Building)
 	mWidgetInputComponent->ConnectMapping(Widget);
 	mBuildingInputComponent->ConnectMapping(Building);
 
+}
+
+void ACharacterBase::SetGhostBuildingLocation(const FVector& Location)
+{
+	if (CHECK(mBuildingComponent))
+		mBuildingComponent->SetGhostBuildingLocation(Location);
+}
+
+void ACharacterBase::SetGhostBuildingRotation(const FRotator& Rotation)
+{
+	if (CHECK(mBuildingComponent))
+		mBuildingComponent->SetGhostBuildingRotation(Rotation);
+}
+
+void ACharacterBase::SetRealBuilding()
+{
+	if (CHECK(mBuildingComponent))
+		mBuildingComponent->SetRealBuilding();
+}
+
+
+FRotator ACharacterBase::GetGhostBuildingRotation()
+{
+	if (CHECK(mBuildingComponent))
+		return mBuildingComponent->GetGhostBuildingRotation();
+
+	return FRotator();
 }

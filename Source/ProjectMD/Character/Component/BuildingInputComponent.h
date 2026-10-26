@@ -26,9 +26,10 @@ protected:
 	TObjectPtr<UInputMappingContext> mIMC_Building;
 	UPROPERTY()
 	TObjectPtr<UInputAction> mIA_BuildingRotation;
-
 	UPROPERTY()
-	TObjectPtr<UCameraComponent> mCamera;
+	TObjectPtr<UInputAction> mIA_BuildingSet;
+	UPROPERTY()
+	TObjectPtr<UInputAction> mIA_BuildingCancel;
 
 	bool mOnBuildingInputComponent = false;
 
@@ -44,5 +45,7 @@ public:
 
 protected:
 	void BuildingRotation(const FInputActionInstance& Instance);
+	void BuildingSet(const FInputActionInstance& Instance);
+	void BuildingCancel(const FInputActionInstance& Instance);
 
 };

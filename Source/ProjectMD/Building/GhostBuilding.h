@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "../Game_Info.h"
+#include "Building_Info.h"
 #include "GameFramework/Actor.h"
 #include "GhostBuilding.generated.h"
 
@@ -33,5 +33,11 @@ public:
 protected:
 	UFUNCTION()
 	void SetBuildingTag(FGameplayTag Tag);
+	UFUNCTION()
+	void BoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void BoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 
 };

@@ -16,8 +16,12 @@ AGhostBuilding::AGhostBuilding()
 	mBox->SetupAttachment(mRoot);
 	mMesh->SetupAttachment(mRoot);
 
-	mBox->SetCollisionProfileName(TEXT("GhostBuiding"));
+	mBox->SetCollisionProfileName(TEXT("GhostBuilding"));
 	mMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	mBox->bHiddenInGame = false;
+
+	mMesh->SetRelativeScale3D(FVector(4));
 
 }
 
@@ -30,6 +34,10 @@ void AGhostBuilding::BeginPlay()
 		return;
 
 	BS->OnGetBuildingTag.AddDynamic(this, &AGhostBuilding::SetBuildingTag);
+
+	mBox->OnComponentBeginOverlap.AddDynamic(this, &AGhostBuilding::BoxBeginOverlap);
+	mBox->OnComponentEndOverlap.AddDynamic(this, &AGhostBuilding::BoxEndOverlap);
+
 }
 
 void AGhostBuilding::Tick(float DeltaTime)
@@ -40,6 +48,30 @@ void AGhostBuilding::Tick(float DeltaTime)
 
 void AGhostBuilding::SetBuildingTag(FGameplayTag Tag)
 {
-	Test(__FUNCTION__);
+	UBuildingSubsystem* BS = GetGameInstance()->GetSubsystem<UBuildingSubsystem>();
+	if (!CHECK(BS))
+		return;
+
+	FBuildingData Data;
+	if (!BS->GetBuildingData(Tag, Data))
+		return;
+
+	USkeletalMesh* Mesh = Data.Mesh;
+	if (!CHECK(Mesh))
+		return;
+
+	mMesh->SetSkeletalMesh(Mesh);
+	mBox->SetBoxExtent(FVector(50));
+	mBox->SetRelativeLocation(FVector(0, 0, 50));
+
 }
 
+void AGhostBuilding::BoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+}
+
+void AGhostBuilding::BoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+
+}

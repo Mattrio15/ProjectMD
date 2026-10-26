@@ -2,24 +2,24 @@
 
 #pragma once
 
-#include "../../Game_Info.h"
+#include "Building_Info.h"
 #include "GameFramework/Actor.h"
-#include "BuildingMinerBase.generated.h"
+#include "BuildingBase.generated.h"
 
 UCLASS()
-class PROJECTMD_API ABuildingMinerBase : public AActor
+class PROJECTMD_API ABuildingBase : public AActor
 {
 	GENERATED_BODY()
 	
 public:
-	ABuildingMinerBase();
+	ABuildingBase();
 
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USceneComponent> mRoot;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UBoxComponent> mBox;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USkeletalMeshComponent> mMesh;
 
 protected:

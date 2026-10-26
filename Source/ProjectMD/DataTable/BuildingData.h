@@ -51,6 +51,9 @@ public:
 	TSubclassOf<AActor> SpawnActorClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USkeletalMesh> Mesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FBuildingCostItem> CostList;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
