@@ -22,7 +22,17 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USkeletalMeshComponent> mMesh;
 
+	UPROPERTY()
+	TObjectPtr<UMaterialInstance> mEnableMaterial;
+	UPROPERTY()
+	TObjectPtr<UMaterialInstance> mDisableMaterial;
+
 	FGameplayTag mBuildingTag;
+
+	int32 mOverlapCount = 0;
+
+	bool mCanBuilding = true;
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -30,9 +40,15 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+public:
+	bool GetCanBuilding() { return mCanBuilding; }
+
 protected:
 	UFUNCTION()
 	void SetBuildingTag(FGameplayTag Tag);
+
+	void SetGhostMaterial(bool A);
+
 	UFUNCTION()
 	void BoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

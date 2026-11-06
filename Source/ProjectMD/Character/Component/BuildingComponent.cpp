@@ -65,6 +65,9 @@ FRotator UBuildingComponent::GetGhostBuildingRotation()
 
 void UBuildingComponent::SetRealBuilding()
 {
+	if (!mGhostBuilding->GetCanBuilding())
+		return;
+
 	UBuildingSubsystem* BS = GetWorld()->GetGameInstance()->GetSubsystem<UBuildingSubsystem>();
 	if (!CHECK(BS))
 		return;

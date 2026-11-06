@@ -25,6 +25,10 @@ UBuildingInputComponent::UBuildingInputComponent()
 	if (IA_BuildingCancel.Succeeded())
 		mIA_BuildingCancel = IA_BuildingCancel.Object;
 
+	ObjectFinder(UInputAction, IA_BuildingGrid, "/Script/EnhancedInput.InputAction'/Game/Input/Building/IA_BuildingGrid.IA_BuildingGrid'");
+	if (IA_BuildingGrid.Succeeded())
+		mIA_BuildingGrid = IA_BuildingGrid.Object;
+
 }
 
 void UBuildingInputComponent::BeginPlay()
@@ -39,28 +43,8 @@ void UBuildingInputComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 	if (!mOnBuildingInputComponent || !CHECK(mController) || !CHECK(mCharacter))
 		return;
-	
-	FHitResult Result;
-	FVector Start;
-	FVector End;
-	FRotator CameraRot;
-	FVector Location;
 
-	mController->GetPlayerViewPoint(Start, CameraRot);
-	End = Start + CameraRot.Vector() * 750;
-
-	bool Collision = GetWorld()->LineTraceSingleByProfile(Result, Start, End, TEXT("BuildingMode"));
-
-	if (Collision)
-		Location = Result.ImpactPoint;
-	else
-	{
-		GetWorld()->LineTraceSingleByProfile(Result, End, End + FVector(0, 0, -10000), TEXT("BuildingMode"));
-		Location = Result.ImpactPoint;
-	}
-
-	mCharacter->SetGhostBuildingLocation(Location);
-
+	SetGhostBuildingLocation();
 }
 
 void UBuildingInputComponent::BindAction(UInputComponent* InputComponent)
@@ -85,6 +69,12 @@ void UBuildingInputComponent::BindAction(UInputComponent* InputComponent)
 
 	if (CHECK(mIA_BuildingCancel))
 		Input->BindAction(mIA_BuildingCancel, ETriggerEvent::Started, this, &UBuildingInputComponent::BuildingCancel);
+
+	if (CHECK(mIA_BuildingGrid))
+	{
+		Input->BindAction(mIA_BuildingGrid, ETriggerEvent::Started, this, &UBuildingInputComponent::BuildingGridOn);
+		Input->BindAction(mIA_BuildingGrid, ETriggerEvent::Completed, this, &UBuildingInputComponent::BuildingGridOff);
+	}
 
 }
 
@@ -116,7 +106,7 @@ void UBuildingInputComponent::BuildingRotation(const FInputActionInstance& Insta
 {
 	float Value = Instance.GetValue().Get<float>();
 
-	if (!CHECK(mCharacter))
+	if (!CHECK(mCharacter) || mGridMode)
 		return;
 
 	FRotator Rot = mCharacter->GetGhostBuildingRotation();
@@ -140,5 +130,42 @@ void UBuildingInputComponent::BuildingCancel(const FInputActionInstance& Instanc
 	AMainHUD* HUD = mController->GetHUD<AMainHUD>();
 	if (CHECK(HUD))
 		HUD->SetPlayerMode(EPlayerMode::Default);
+
+}
+
+void UBuildingInputComponent::SetGhostBuildingLocation()
+{
+	FName TraceName = mGridMode ? TEXT("RealBuilding") : TEXT("BuildingMode");
+
+	FHitResult Result;
+	FVector Start;
+	FVector End;
+	FRotator CameraRot;
+	FVector Location;
+
+	mController->GetPlayerViewPoint(Start, CameraRot);
+	End = Start + CameraRot.Vector() * 750;
+
+	bool Collision = GetWorld()->LineTraceSingleByProfile(Result, Start, End, TraceName);
+
+	if (Collision)
+	{
+		Location = Result.ImpactPoint;
+		FName HitCollision = Result.GetComponent()->GetCollisionProfileName();
+		if (mGridMode && HitCollision == TEXT("RealBuilding") && CHECK(Result.GetActor()))
+		{
+			// TODO : 110 바꾸기 <- 각 빌딩의 박스 크기 + 10
+			Location = Result.GetActor()->GetActorLocation() + Result.ImpactNormal * 110;
+			FRotator Rot = Result.GetActor()->GetActorRotation();
+			mCharacter->SetGhostBuildingRotation(Rot);
+		}
+	}
+	else
+	{
+		GetWorld()->LineTraceSingleByProfile(Result, End, End + FVector(0, 0, -10000), TraceName);
+		Location = Result.ImpactPoint;
+	}
+
+	mCharacter->SetGhostBuildingLocation(Location);
 
 }

@@ -23,6 +23,14 @@ AGhostBuilding::AGhostBuilding()
 
 	mMesh->SetRelativeScale3D(FVector(4));
 
+	ObjectFinder(UMaterialInstance, EnableMaterial, "/Script/Engine.MaterialInstanceConstant'/Game/Material/Building/MI_GhostBuildingEnable.MI_GhostBuildingEnable'");
+	if (EnableMaterial.Succeeded())
+		mEnableMaterial = EnableMaterial.Object;
+
+	ObjectFinder(UMaterialInstance, DisableMaterial, "/Script/Engine.MaterialInstanceConstant'/Game/Material/Building/MI_GhostBuildingDisable.MI_GhostBuildingDisable'");
+	if (DisableMaterial.Succeeded())
+		mDisableMaterial = DisableMaterial.Object;
+
 }
 
 void AGhostBuilding::BeginPlay()
@@ -64,14 +72,34 @@ void AGhostBuilding::SetBuildingTag(FGameplayTag Tag)
 	mBox->SetBoxExtent(FVector(50));
 	mBox->SetRelativeLocation(FVector(0, 0, 50));
 
+	SetGhostMaterial(true);
+
+}
+
+void AGhostBuilding::SetGhostMaterial(bool A)
+{
+	UMaterialInstance* MI = A ? mEnableMaterial : mDisableMaterial;
+
+	if (!CHECK(MI) || !CHECK(mMesh))
+		return;
+
+	int32 Max = mMesh->GetNumMaterials();
+	for (int32 i = 0; i < Max; ++i)
+		mMesh->SetMaterial(i, MI);
+
+	mCanBuilding = A;
 }
 
 void AGhostBuilding::BoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	SetGhostMaterial(false);
+	mOverlapCount += 1;
 }
 
 void AGhostBuilding::BoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-
+	mOverlapCount = FMath::Max(0, mOverlapCount - 1);
+	if (mOverlapCount < 1)
+		SetGhostMaterial(true);
 }

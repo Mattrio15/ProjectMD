@@ -30,8 +30,11 @@ protected:
 	TObjectPtr<UInputAction> mIA_BuildingSet;
 	UPROPERTY()
 	TObjectPtr<UInputAction> mIA_BuildingCancel;
+	UPROPERTY()
+	TObjectPtr<UInputAction> mIA_BuildingGrid;
 
 	bool mOnBuildingInputComponent = false;
+	bool mGridMode = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -47,5 +50,10 @@ protected:
 	void BuildingRotation(const FInputActionInstance& Instance);
 	void BuildingSet(const FInputActionInstance& Instance);
 	void BuildingCancel(const FInputActionInstance& Instance);
+	void BuildingGridOn(const FInputActionInstance& Instance) { mGridMode = true; }
+	void BuildingGridOff(const FInputActionInstance& Instance) { mGridMode = false; }
+
+protected:
+	void SetGhostBuildingLocation();
 
 };
