@@ -17,5 +17,6 @@ enum class EWidgetType : uint8
 {
 	None,
 	Building,
-	BuildingMode
+	BuildingMode,
+	Miner
 };

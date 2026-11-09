@@ -21,6 +21,15 @@ UWidgetInputComponent::UWidgetInputComponent()
 	if (IA_NextPage.Succeeded())
 		mIA_NextPage = IA_NextPage.Object;
 
+
+	ObjectFinder(UInputMappingContext, IMC_Miner, "/Script/EnhancedInput.InputMappingContext'/Game/Input/Widget/MinerWidget/IMC_Miner.IMC_Miner'");
+	if (IMC_Miner.Succeeded())
+		mIMC_Miner = IMC_Miner.Object;
+
+	ObjectFinder(UInputAction, IA_MinerClose, "/Script/EnhancedInput.InputAction'/Game/Input/Widget/MinerWidget/IA_MinerClose.IA_MinerClose'");
+	if (IA_MinerClose.Succeeded())
+		mIA_MinerClose = IA_MinerClose.Object;
+
 }
 
 void UWidgetInputComponent::BeginPlay()
@@ -45,6 +54,10 @@ void UWidgetInputComponent::BindAction(UInputComponent* InputComponent)
 	if (!CHECK(mController))
 		return;
 
+	AMainHUD* HUD = mController->GetHUD<AMainHUD>();
+	if (CHECK(HUD))
+		mHUD = HUD;
+
 	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(InputComponent);
 	if (!CHECK(Input))
 		return;
@@ -55,32 +68,53 @@ void UWidgetInputComponent::BindAction(UInputComponent* InputComponent)
 	if (IsValid(mIA_NextPage))
 		Input->BindAction(mIA_NextPage, ETriggerEvent::Started, this, &UWidgetInputComponent::NextPage);
 
+
+
+	if (CHECK(mIA_MinerClose))
+		Input->BindAction(mIA_MinerClose, ETriggerEvent::Started, this, &UWidgetInputComponent::MinerClose);
+
 }
 
 void UWidgetInputComponent::ConnectMapping(bool A)
 {
+	UInputMappingContext* Context = nullptr;
+
+	if (!CHECK(mHUD))
+		return;
+
+	EPlayerMode Mode = mHUD->GetPlayerMode();
+
+	switch (Mode)
+	{
+	case EPlayerMode::BuildingWidget: Context = mIMC_Widget; break;
+	case EPlayerMode::MinerWidget: Context = mIMC_Miner; break;
+
+	default:
+		break;
+	}
+
+
 	if (ULocalPlayer* LP = mController->GetLocalPlayer())
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* EILPS = LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 		{
 			if (A)
-				EILPS->AddMappingContext(mIMC_Widget, 1);
+				EILPS->AddMappingContext(Context, 1);
 			else
+			{
 				EILPS->RemoveMappingContext(mIMC_Widget);
+				EILPS->RemoveMappingContext(mIMC_Miner);
+			}
 		}
 	}
 }
 
 void UWidgetInputComponent::BuildingClose(const FInputActionInstance& Instance)
 {
-	if (!CHECK(mController) || !CHECK(mCharacter))
+	if (!CHECK(mController) || !CHECK(mCharacter) || !CHECK(mHUD))
 		return;
 
-	AMainHUD* HUD = mController->GetHUD<AMainHUD>();
-	if (!CHECK(HUD))
-		return;
-	
-	HUD->SetPlayerMode(EPlayerMode::Default);
+	mHUD->SetPlayerMode(EPlayerMode::Default);
 
 }
 
@@ -90,13 +124,15 @@ void UWidgetInputComponent::NextPage(const FInputActionInstance& Instance)
 
 	bool Next = Value > 0 ? true : false;
 
-	if (!CHECK(mController))
+	if (!CHECK(mController) ||!CHECK(mHUD))
 		return;
+		
+	mHUD->NextPageWidget(Next);
 
-	AMainHUD* HUD = mController->GetHUD<AMainHUD>();
-	if (!CHECK(HUD))
-		return;
-	
-	HUD->NextPageWidget(Next);
+}
 
+void UWidgetInputComponent::MinerClose(const FInputActionInstance& Instance)
+{
+	if (CHECK(mHUD))
+		mHUD->SetPlayerMode(EPlayerMode::Default);
 }

@@ -4,15 +4,19 @@
 
 #include "Building_Info.h"
 #include "GameFramework/Actor.h"
+#include "../Interface/InteractionInterface.h"
 #include "BuildingBase.generated.h"
 
 UCLASS()
-class PROJECTMD_API ABuildingBase : public AActor
+class PROJECTMD_API ABuildingBase : public AActor, public IInteractionInterface
 {
 	GENERATED_BODY()
 	
 public:
 	ABuildingBase();
+
+public:
+	virtual void Interaction(AActor* Interactor) override;
 
 protected:
 	UPROPERTY(VisibleAnywhere)

@@ -32,6 +32,12 @@ protected:
 	TObjectPtr<UInputAction> mIA_Jump;
 	UPROPERTY()
 	TObjectPtr<UInputAction> mIA_Building;
+	UPROPERTY()
+	TObjectPtr<UInputAction> mIA_Interaction;
+
+	UPROPERTY()
+	TObjectPtr<AActor> mInteractiveActor;
+	bool mCanInteract = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -47,7 +53,10 @@ protected:
 	void Move(const FInputActionInstance& Instance);
 	void CameraRotation(const FInputActionInstance& Instance);
 	void Jump(const FInputActionInstance& Instance);
-	void Building(const FInputActionInstance& Instance);	
+	void Building(const FInputActionInstance& Instance);
+	void Interaction(const FInputActionInstance& Instance);
 
+protected:
+	void InteractionTrace();
 
 };

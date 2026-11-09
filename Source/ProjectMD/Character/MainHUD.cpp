@@ -44,10 +44,13 @@ void AMainHUD::ShowMouse(bool A)
 
 }
 
-FPlayerMode* AMainHUD::GetPlayerMode(EPlayerMode Mode)
+FPlayerMode* AMainHUD::FindPlayerMode(EPlayerMode Mode)
 {
 	if (!CHECK(mPlayerModeTable))
 		return nullptr;
+
+	if (mTM_PlayerMode.Contains(Mode))
+		return &mTM_PlayerMode[Mode];
 
 	TArray<FPlayerMode*> PlayerModeArray;
 	mPlayerModeTable->GetAllRows<FPlayerMode>(TEXT(__FUNCTION__), PlayerModeArray);
@@ -57,7 +60,10 @@ FPlayerMode* AMainHUD::GetPlayerMode(EPlayerMode Mode)
 	{
 		FPlayerMode* PlayerMode = PlayerModeArray[i];
 		if (PlayerMode->Mode == Mode)
+		{
+			mTM_PlayerMode.Add(Mode, *PlayerMode);
 			return PlayerMode;
+		}
 	}
 
 	return nullptr;
@@ -65,17 +71,15 @@ FPlayerMode* AMainHUD::GetPlayerMode(EPlayerMode Mode)
 
 void AMainHUD::SetPlayerMode(EPlayerMode Mode)
 {
+	mPlayerMode = Mode;
+
+	FPlayerMode* PlayerMode = FindPlayerMode(Mode);
+
 	APlayerController* PC = GetOwningPlayerController();
 	if (!CHECK(PC))
 		return;
 	ACharacterBase* CB = Cast<ACharacterBase>(PC->GetCharacter());
-	if (!CHECK(CB))
-		return;
-	if (!CHECK(mMainWidget))
-		return;
-
-	FPlayerMode* PlayerMode = GetPlayerMode(Mode);
-	if (!PlayerMode)
+	if (!CHECK(CB) || !CHECK(mMainWidget) || !PlayerMode)
 		return;
 
 	ShowMouse(PlayerMode->ShowMouse);

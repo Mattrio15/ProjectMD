@@ -8,6 +8,7 @@
 #include "WidgetInputComponent.generated.h"
 
 class ACharacterBase;
+class AMainHUD;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTMD_API UWidgetInputComponent : public UActorComponent
@@ -22,13 +23,22 @@ protected:
 	TObjectPtr<ACharacterBase> mCharacter;
 	UPROPERTY()
 	TObjectPtr<APlayerController> mController;
+	UPROPERTY()
+	TObjectPtr<AMainHUD> mHUD;
 
+	// ±‚∫ª ¿ß¡¨
 	UPROPERTY()
 	TObjectPtr<UInputMappingContext> mIMC_Widget;
 	UPROPERTY()
 	TObjectPtr<UInputAction> mIA_BuildingClose;
 	UPROPERTY()
 	TObjectPtr<UInputAction> mIA_NextPage;
+
+	// ∏∂¿Ã≥  ¿ß¡¨
+	UPROPERTY()
+	TObjectPtr<UInputMappingContext> mIMC_Miner;
+	UPROPERTY()
+	TObjectPtr<UInputAction> mIA_MinerClose;
 
 protected:
 	virtual void BeginPlay() override;
@@ -41,7 +51,12 @@ public:
 	void ConnectMapping(bool A);
 
 protected:
+	// ±‚∫ª ¿ß¡¨
 	void BuildingClose(const FInputActionInstance& Instance);
 	void NextPage(const FInputActionInstance& Instance);
-		
+	
+	// ∏∂¿Ã≥  ¿ß¡¨
+	void MinerClose(const FInputActionInstance& Instance);
+
+
 };

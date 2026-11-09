@@ -4,6 +4,7 @@
 #include "DefaultInputComponent.h"
 #include "../CharacterBase.h"
 #include "../MainHUD.h"
+#include "../../Interface/InteractionInterface.h"
 
 UDefaultInputComponent::UDefaultInputComponent()
 {
@@ -29,6 +30,10 @@ UDefaultInputComponent::UDefaultInputComponent()
 	if (IA_Building.Succeeded())
 		mIA_Building = IA_Building.Object;
 
+	ObjectFinder(UInputAction, IA_Interaction, "/Script/EnhancedInput.InputAction'/Game/Input/Default/IA_Interaction.IA_Interaction'");
+	if (IA_Interaction.Succeeded())
+		mIA_Interaction = IA_Interaction.Object;
+
 }
 
 void UDefaultInputComponent::BeginPlay()
@@ -40,6 +45,11 @@ void UDefaultInputComponent::BeginPlay()
 void UDefaultInputComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	AMainHUD* HUD = mController->GetHUD<AMainHUD>();
+
+	if (CHECK(HUD) && HUD->GetPlayerMode() == EPlayerMode::Default)
+		InteractionTrace();
 
 }
 
@@ -69,10 +79,16 @@ void UDefaultInputComponent::BindAction(UInputComponent* InputComponent)
 	if (IsValid(mIA_Building))
 		Input->BindAction(mIA_Building, ETriggerEvent::Started, this, &UDefaultInputComponent::Building);
 
+	if (CHECK(mIA_Interaction))
+		Input->BindAction(mIA_Interaction, ETriggerEvent::Started, this, &UDefaultInputComponent::Interaction);
+
 }
 
 void UDefaultInputComponent::ConnectMapping(bool A)
 {
+	if (!CHECK(mController))
+		return;
+
 	if (ULocalPlayer* LP = mController->GetLocalPlayer())
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* EILPS = LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
@@ -134,5 +150,44 @@ void UDefaultInputComponent::Building(const FInputActionInstance& Instance)
 		return;
 	
 	HUD->SetPlayerMode(EPlayerMode::BuildingWidget);
+
+}
+
+void UDefaultInputComponent::Interaction(const FInputActionInstance& Instance)
+{
+	if (!mCanInteract || !CHECK(mInteractiveActor))
+		return;
+
+	IInteractionInterface* II = Cast<IInteractionInterface>(mInteractiveActor);
+	if (II)
+		II->Interaction(mController);
+
+}
+
+void UDefaultInputComponent::InteractionTrace()
+{
+	FHitResult Result;
+	FVector Start;
+	FRotator CameraRot;
+
+	mController->GetPlayerViewPoint(Start, CameraRot);
+
+	FVector End = Start + CameraRot.Vector() * 500;
+
+	bool Collision = GetWorld()->LineTraceSingleByProfile(Result, Start, End, TEXT("Interaction"));
+
+	if (Collision && Result.GetActor())
+	{
+		AActor* ResultActor = Result.GetActor();
+		if (ResultActor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		{
+			mInteractiveActor = ResultActor;
+			mCanInteract = true;
+			return;
+		}
+	}
+
+	mInteractiveActor = nullptr;
+	mCanInteract = false;
 
 }

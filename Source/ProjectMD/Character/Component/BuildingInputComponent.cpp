@@ -110,8 +110,6 @@ void UBuildingInputComponent::ConnectMapping(bool A)
 
 void UBuildingInputComponent::SetBuildingTag(FGameplayTag Tag)
 {
-	Test(__FUNCTION__);
-	
 	UBuildingSubsystem* BS = GetWorld()->GetGameInstance()->GetSubsystem<UBuildingSubsystem>();
 	if (!CHECK(BS))
 		return;

@@ -18,6 +18,8 @@ protected:
 	TObjectPtr<UWidgetBase> WBP_Building;
 	UPROPERTY(meta = (BindWidgetOptional))
 	TObjectPtr<UWidgetBase> WBP_BuildingMode;
+	UPROPERTY(meta = (BindWidgetOptional))
+	TObjectPtr<UWidgetBase> WBP_Miner;
 
 protected:
 	virtual void NativeOnInitialized() override;

@@ -29,6 +29,7 @@ UWidgetBase* UMainWidget::GetWidget(EWidgetType Type)
 	case EWidgetType::None: return nullptr;
 	case EWidgetType::Building: return WBP_Building;
 	case EWidgetType::BuildingMode: return WBP_BuildingMode;
+	case EWidgetType::Miner: return WBP_Miner;
 
 	default:
 		break;

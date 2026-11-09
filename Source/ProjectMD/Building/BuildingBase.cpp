@@ -20,6 +20,11 @@ ABuildingBase::ABuildingBase()
 
 }
 
+void ABuildingBase::Interaction(AActor* Interactor)
+{
+	Test(__FUNCTION__);
+}
+
 void ABuildingBase::BeginPlay()
 {
 	Super::BeginPlay();

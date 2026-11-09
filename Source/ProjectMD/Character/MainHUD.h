@@ -14,7 +14,8 @@ enum class EPlayerMode :uint8
 {
 	Default,
 	BuildingWidget,
-	BuildingMode
+	BuildingMode,
+	MinerWidget
 };
 
 USTRUCT(BlueprintType)
@@ -53,6 +54,7 @@ public:
 	{
 		WidgetVisibility.Emplace(FWidgetVisibilityInfo(EWidgetType::Building, false));
 		WidgetVisibility.Emplace(FWidgetVisibilityInfo(EWidgetType::BuildingMode, false));
+		WidgetVisibility.Emplace(FWidgetVisibilityInfo(EWidgetType::Miner, false));
 	}
 
 };
@@ -71,16 +73,21 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TObjectPtr<UDataTable> mPlayerModeTable;
 
+	EPlayerMode mPlayerMode = EPlayerMode::Default;
+
+	UPROPERTY()
+	TMap<EPlayerMode, FPlayerMode> mTM_PlayerMode;
 		
 public:
 	virtual void BeginPlay() override;
 
 protected:
 	void ShowMouse(bool A);
-	FPlayerMode* GetPlayerMode(EPlayerMode Mode);
+	FPlayerMode* FindPlayerMode(EPlayerMode Mode);
 
 public:
 	void SetPlayerMode(EPlayerMode Mode);
+	EPlayerMode GetPlayerMode() { return mPlayerMode; }
 
 	void NextPageWidget(bool A);
 
