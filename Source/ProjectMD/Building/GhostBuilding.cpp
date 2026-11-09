@@ -19,10 +19,6 @@ AGhostBuilding::AGhostBuilding()
 	mBox->SetCollisionProfileName(TEXT("GhostBuilding"));
 	mMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	mBox->bHiddenInGame = false;
-
-	mMesh->SetRelativeScale3D(FVector(4));
-
 	ObjectFinder(UMaterialInstance, EnableMaterial, "/Script/Engine.MaterialInstanceConstant'/Game/Material/Building/MI_GhostBuildingEnable.MI_GhostBuildingEnable'");
 	if (EnableMaterial.Succeeded())
 		mEnableMaterial = EnableMaterial.Object;
@@ -31,6 +27,13 @@ AGhostBuilding::AGhostBuilding()
 	if (DisableMaterial.Succeeded())
 		mDisableMaterial = DisableMaterial.Object;
 
+	// 수정 및 지울 것
+	mBox->bHiddenInGame = false;
+	mMesh->SetRelativeScale3D(FVector(4));
+
+	mTestArrow = MyObject(UArrowComponent, "TestArrow");
+	mTestArrow->SetupAttachment(mBox);
+	mTestArrow->bHiddenInGame = false;
 }
 
 void AGhostBuilding::BeginPlay()
@@ -69,8 +72,10 @@ void AGhostBuilding::SetBuildingTag(FGameplayTag Tag)
 		return;
 
 	mMesh->SetSkeletalMesh(Mesh);
-	mBox->SetBoxExtent(FVector(50));
-	mBox->SetRelativeLocation(FVector(0, 0, 50));
+
+	FVector BoxExtent = Data.BoxExtent;
+	mBox->SetBoxExtent(BoxExtent);
+	mBox->SetRelativeLocation(FVector(0, 0, BoxExtent.Z));
 
 	SetGhostMaterial(true);
 

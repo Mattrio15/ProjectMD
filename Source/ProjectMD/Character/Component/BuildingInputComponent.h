@@ -33,8 +33,11 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UInputAction> mIA_BuildingGrid;
 
+	FVector mBoxExtent;
+
 	bool mOnBuildingInputComponent = false;
 	bool mGridMode = false;
+	bool mGridRotation = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -45,6 +48,10 @@ public:
 public:
 	void BindAction(UInputComponent* InputComponent);
 	void ConnectMapping(bool A);
+
+protected:
+	UFUNCTION()
+	void SetBuildingTag(FGameplayTag Tag);
 
 protected:
 	void BuildingRotation(const FInputActionInstance& Instance);

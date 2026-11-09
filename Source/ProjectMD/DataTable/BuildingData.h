@@ -74,5 +74,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 ThirdOrder = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector BoxExtent;
 
 };

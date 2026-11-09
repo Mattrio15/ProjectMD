@@ -4,6 +4,7 @@
 #include "BuildingInputComponent.h"
 #include "../CharacterBase.h"
 #include "../MainHUD.h"
+#include "../../Subsystem/BuildingSubsystem.h"
 
 UBuildingInputComponent::UBuildingInputComponent()
 {
@@ -34,6 +35,10 @@ UBuildingInputComponent::UBuildingInputComponent()
 void UBuildingInputComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UBuildingSubsystem* BS = GetWorld()->GetGameInstance()->GetSubsystem<UBuildingSubsystem>();
+	if (CHECK(BS))
+		BS->OnGetBuildingTag.AddDynamic(this, &UBuildingInputComponent::SetBuildingTag);
 
 }
 
@@ -73,6 +78,7 @@ void UBuildingInputComponent::BindAction(UInputComponent* InputComponent)
 	if (CHECK(mIA_BuildingGrid))
 	{
 		Input->BindAction(mIA_BuildingGrid, ETriggerEvent::Started, this, &UBuildingInputComponent::BuildingGridOn);
+		// TODO : 빌딩 입력 모드를 종료 시, Completed가 호출되지 않음
 		Input->BindAction(mIA_BuildingGrid, ETriggerEvent::Completed, this, &UBuildingInputComponent::BuildingGridOff);
 	}
 
@@ -102,12 +108,29 @@ void UBuildingInputComponent::ConnectMapping(bool A)
 	}
 }
 
+void UBuildingInputComponent::SetBuildingTag(FGameplayTag Tag)
+{
+	Test(__FUNCTION__);
+	
+	UBuildingSubsystem* BS = GetWorld()->GetGameInstance()->GetSubsystem<UBuildingSubsystem>();
+	if (!CHECK(BS))
+		return;
+
+	FBuildingData Data;
+	BS->GetBuildingData(Tag, Data);
+	mBoxExtent = Data.BoxExtent;
+
+}
+
 void UBuildingInputComponent::BuildingRotation(const FInputActionInstance& Instance)
 {
 	float Value = Instance.GetValue().Get<float>();
 
-	if (!CHECK(mCharacter) || mGridMode)
+	if (!CHECK(mCharacter))
 		return;
+
+	if (mGridMode)
+		Value = Value > 0 ? 90 : -90;
 
 	FRotator Rot = mCharacter->GetGhostBuildingRotation();
 
@@ -147,18 +170,23 @@ void UBuildingInputComponent::SetGhostBuildingLocation()
 	End = Start + CameraRot.Vector() * 750;
 
 	bool Collision = GetWorld()->LineTraceSingleByProfile(Result, Start, End, TraceName);
-
+	
 	if (Collision)
 	{
 		Location = Result.ImpactPoint;
 		FName HitCollision = Result.GetComponent()->GetCollisionProfileName();
 		if (mGridMode && HitCollision == TEXT("RealBuilding") && CHECK(Result.GetActor()))
 		{
-			// TODO : 110 바꾸기 <- 각 빌딩의 박스 크기 + 10
-			Location = Result.GetActor()->GetActorLocation() + Result.ImpactNormal * 110;
-			FRotator Rot = Result.GetActor()->GetActorRotation();
-			mCharacter->SetGhostBuildingRotation(Rot);
+			Location = Result.GetActor()->GetActorLocation() + Result.ImpactNormal * (mBoxExtent.X * 2 + 10);
+			if (!mGridRotation)
+			{
+				FRotator Rot = Result.GetActor()->GetActorRotation();
+				mCharacter->SetGhostBuildingRotation(Rot);
+				mGridRotation = true;
+			}
 		}
+		else
+			mGridRotation = false;
 	}
 	else
 	{

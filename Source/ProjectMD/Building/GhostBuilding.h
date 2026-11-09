@@ -33,6 +33,9 @@ protected:
 
 	bool mCanBuilding = true;
 
+	UPROPERTY()
+	TObjectPtr<UArrowComponent> mTestArrow;
+
 
 protected:
 	virtual void BeginPlay() override;
